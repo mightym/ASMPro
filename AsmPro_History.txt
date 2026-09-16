@@ -21,6 +21,23 @@ http://asmpro.surf.to
     depending on the program being debugged. The cursor escape handler
     (PRINT_SETCORDY) read a long via an uninitialised a5 and overwrote
     a1, the text buffer pointer. This is the known "enforcer hit" there.
+02. DEBUG: An exception before the first run of a program (for example
+    an address error inside Asm-Pro itself) froze the machine: the
+    exception handler restored vectors, copper, DMA/INT settings and the
+    View from values that are only saved when a program is started.
+03. DEBUG: A breakpoint at an odd address (Amiga-B on a line after odd
+    length data, the G breakpoint prompt, ADDBP, step over a JMP) locked
+    up a 68000 in an endless address error loop. Such breakpoints are
+    now ignored.
+04. DEBUG: Stepping onto an unknown opcode could set a breakpoint at an
+    address taken from the stack (stale flags).
+05. DEBUG: Watches of pointer type (DC.L/DC.W/DR.L/DR.W) on an odd
+    address raised an address error on a 68000.
+06. DEBUG: After an address error at an odd PC the register report
+    faulted again and replaced the program's registers with Asm-Pro's.
+07. DEBUG/ASM: Without an FPU, Ctrl-Shift-C in the debugger and DCB/BLK
+    with a float size and no fill value executed FPU instructions.
+08. ASM: INCIFFP did not check for a word at an odd address.
 
 ================= Asm-Pro V1.22 (24-Dec-2025) ======================
 People contributing to this opensource release:
