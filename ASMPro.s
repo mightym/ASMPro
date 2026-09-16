@@ -42600,10 +42600,13 @@ com_jump:
 	bsr.b	SetProgramParams
 	br	DEBUG_JUMP_TO_PROGCOUNT_NO_TRACE
 
-INITRESCUE:
+; Save what GORESCUE puts back after an exception: copper lists, DMA/INT
+; settings and vectors 2-31. INITRESCUE does this before every run of the
+; program, TASKRESCUE once at startup. Without the latter an exception
+; before the first run (e.g. an address error in Asm-Pro itself) restores
+; all zeros: null vectors, no copper, no interrupts, a dead machine.
+SAVERESCUESTATE:
 	movem.l	d0/a0/a1/a6,-(sp)
-	btst	#0,(PR_Rescue).l
-	beq	C1AC60
 
 ;---  Get copper list  ---
 
@@ -42626,6 +42629,14 @@ INITRESCUE:
 .ptrlopje:
 	move.l	(a0)+,(a1)+
 	dbra	d0,.ptrlopje
+	movem.l	(sp)+,d0/a0/a1/a6
+	rts
+
+INITRESCUE:
+	movem.l	d0/a0/a1/a6,-(sp)
+	btst	#0,(PR_Rescue).l
+	beq	C1AC60
+	bsr	SAVERESCUESTATE
 
 	move.l	#$2000,d0
 	move.l	#$2B00,d1
@@ -47086,6 +47097,11 @@ com_add_workspace:
 TASKRESCUE:
 	move.l	(DATA_TASKPTR-DT,a4),a0
 	move.l	#EXCEPTIONHANDLER,(TC_TRAPCODE,a0)
+	jsr	(SAVERESCUESTATE).l	; the handler restores these, so they
+	move.l	(4).w,a0		; must be valid before the first run
+	move.w	(IDNestCnt,a0),(IntDisableCnt-DT,a4) ; IDNestCnt and TDNestCnt!
+	move.l	(GfxBase-DT,a4),a0
+	move.l	(34,a0),(SysActiveView-DT,a4)	; gb_ActiView
 	rts
 
 IetsMetScreenHight:
