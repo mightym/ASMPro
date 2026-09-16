@@ -22479,6 +22479,8 @@ CDC24:
 	move.l	d3,-(sp)
 	bsr	PARSE_GET_KOMMA_IF_ANY
 	beq.b	CDC44
+	tst	(FPU_Type-DT,a4)	;no fill value: fp0 = 0 needs an FPU too
+	beq	ERROR_FPUneededforopp
 	moveq	#0,d2
 	fmove.l	d2,fp0
 	bra.b	CDC48
@@ -22531,6 +22533,8 @@ CDCB4:
 	move.l	d3,-(sp)
 	bsr	PARSE_GET_KOMMA_IF_ANY
 	beq.b	CDCD4
+	tst	(FPU_Type-DT,a4)	;no fill value: fp0 = 0 needs an FPU too
+	beq	ERROR_FPUneededforopp
 	moveq	#0,d2
 	fmove.l	d2,fp0
 	bra.b	CDCD8
@@ -22583,6 +22587,8 @@ CDD44:
 	move.l	d3,-(sp)
 	bsr	PARSE_GET_KOMMA_IF_ANY
 	beq.b	CDD64
+	tst	(FPU_Type-DT,a4)	;no fill value: fp0 = 0 needs an FPU too
+	beq	ERROR_FPUneededforopp
 	moveq	#0,d2
 	fmove.l	d2,fp0
 	bra.b	CDD68
@@ -22638,6 +22644,8 @@ CDDDA:
 	move.l	d3,-(sp)
 	bsr	PARSE_GET_KOMMA_IF_ANY
 	beq.b	CDDFA
+	tst	(FPU_Type-DT,a4)	;no fill value: fp0 = 0 needs an FPU too
+	beq	ERROR_FPUneededforopp
 	moveq	#0,d2
 	fmove.l	d2,fp0
 	bra.b	CDDFE
@@ -40771,8 +40779,11 @@ DEBUG_SetBreakpointhere:
 	br	com_singlestep
 
 DEBUG_ChangefromDx2FPx:
+	tst	(FPU_Type-DT,a4)	;no FPU: nothing to show, the redraw would
+	beq.b	.nofpu			; execute fmovem and trap
 	not.b	(debug_FPregs-DT,a4)
 	bra	resize_db_win
+.nofpu	rts
 
 DEBUG_TYPECHANGE_MAIN:
 	move.b	#21,(BreakKey-DT,a4)	;AMIGA_C
