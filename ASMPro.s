@@ -33881,15 +33881,8 @@ PRINT_SETCORDY:
 	move	(aantal_regels_min3-DT,a4),d1
 	bsr	scroll_up_cmdmode
 .C14F60
-	add.w	d1,d1		;!!! there is an enforcer hit somewhere around here..
-	move	d1,d7
-	move.l	a6,a1
-	IF	MC020
-	add.l	(a5,d1.w*2),a1
-	ELSE
 	add.w	d1,d1
-	add.l	(a5,d1.w),a1
-	ENDIF
+	move	d1,d7		;row only, the 'H' that follows moves the cursor
 	bra.b	C14F06
 
 PRINT_DELETEEOL:

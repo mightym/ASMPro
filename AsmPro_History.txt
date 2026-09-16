@@ -15,6 +15,13 @@ Known bugs:
 Check homapage for more info:
 http://asmpro.surf.to
 
+================= Unreleased (fork: github.com/mightym/ASMPro) ======
+[ BUGFIXES ]
+01. DEBUG: Address Error on a plain 68000 when opening the debugger (AD),
+    depending on the program being debugged. The cursor escape handler
+    (PRINT_SETCORDY) read a long via an uninitialised a5 and overwrote
+    a1, the text buffer pointer. This is the known "enforcer hit" there.
+
 ================= Asm-Pro V1.22 (24-Dec-2025) ======================
 People contributing to this opensource release:
 - amigo/binary (amigo@binary.si)
