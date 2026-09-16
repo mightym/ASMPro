@@ -40827,6 +40827,7 @@ DEBUG_JUMP_TO_MARK:
 	bra.b	DEBUG_SetTmpMark
 C19E64:
 	lea	(12,sp),sp
+	bclr	#0,(pcounter_base+3-DT,a4) ; like DEBUG_JUMP_ADDR
 	br	DEBUG_REDRAW
 
 DEBUG_BP_MARK:
@@ -42435,6 +42436,9 @@ DEBUG_ADD_AND_JUMP:
 ; A1 = Break point to set
 
 DEBUG_ADD_BRKPT:
+	move.w	a1,d5		;68000: ignore an odd address, reading
+	btst	#0,d5		; the opcode there faults, and so would
+	bne.b	.odd		; removing the breakpoint, forever
 	lea	(BREAKPTBUFFER-DT,a4),a5
 	moveq	#16-1,d5
 .lopje:
@@ -42446,6 +42450,7 @@ DEBUG_ADD_BRKPT:
 .empty:
 	move.l	a1,(a5)+
 	move	(a1),(a5)+
+.odd:
 	rts
 
 DEBUG_CLEAR_BP_BUFFER:
@@ -50559,6 +50564,7 @@ DISLENGTH_A5:
 
 .UNKNOWN:
 	moveq	#0,d1
+	moveq	#0,d2		; no DF_ flags (d2 was left stale)
 	rts
 
 .CALC_OPERAND:
