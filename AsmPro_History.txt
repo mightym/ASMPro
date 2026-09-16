@@ -15,6 +15,67 @@ Known bugs:
 Check homapage for more info:
 http://asmpro.surf.to
 
+================= Asm-Pro V1.22 (24-Dec-2025) ======================
+People contributing to this opensource release:
+- amigo/binary (amigo@binary.si)
+
+[ ADDITIONS/MODIFICATIONS ]
+1. ASM: Added QREPT directive (paired with ENDR, just like REPT). It generates
+   identical copies of the repeat block resulting in shorter assembly time. It
+   evaluates the block (at most) once and then copies it as many times as needed.
+   Consequently, you can declare labels and constants within, there will be no
+   double symbol errors.
+2. DISASM: FPU k-factor is now displayed as a signed 7-bit integer instead of
+   unsigned. This is more in line with Motorola documentation.
+3. Additional SE (special edition) build of Asm-Pro without gfx assets (logotips),
+   resulting in lower chipmem usage by about 16KB.
+
+[ BUGFIXES ]
+01. UI: Duplicate menu Commands->Output.
+02. EDIT: Pasting a larger block freezes the editor until ESC is pressed.
+03. ASM: Using directives WO/WX/WL to write a file with a large number of relocs
+    could overflow the stack. Added stack protection.
+04. ASM: Incorrect debug line info when a macro contains a directive, instruction,
+    or macro call with constructed name (e.g. using macro arguments).
+05. ASM: REM and TEXT blocks are missing debug line info, causing the source level
+    debugger to misbehave when manually setting a breakpoint.
+06. EDIT: Incorrect free memory amount displayed if more than 99999KB is available.
+07. EDIT: Long filenames (more than 30 characters) of source files overrun several
+    internal buffers.
+08. EDIT: Old source's current directory filename buffer is padded instead of new
+    source's buffer during source switching, which could lead to path corruption.
+09: UI: Tag lists incorrectly terminated in some cases (-1 instead of 0/TAG_DONE).
+10: ASM: K-factor in fmove.p is not parsed properly (in both data register and
+    numerical form), and it could also result in entirely incorrect opcode.
+11: EDIT: Syntax coloring in 1-bitplane mode is not disabled due to a bad screen
+    depth check.
+12: UI: Screen depth exceeding maximum (4) causes endless loop. Default screen
+    depth will be used instead in such cases.
+
+================= Asm-Pro V1.21 (21-Dec-2024) ======================
+People contributing to this opensource release:
+- amigo/binary (amigo@binary.si)
+
+[ ADDITIONS ]
+1. ASM: Optional multi-line scroll (8 lines instead of only 1) to speed
+   up assembly when output is verbose (e.g. large number of included files
+   or print directives). Check Multiscroll in the assembler preferences.
+2. ASM: New integer operator: modulo // (e.g. 123//20 returns 3).
+
+[ BUGFIXES ]
+1. ASM: REM/EREM block was not allowed in BSS sections.
+2. CMDLN: RB (read binary) causes a crash if begin address is unparsable.
+3. UI: Bevel box is slightly off for the top parameter groups in the
+   environment preferences.
+4. CMDLN: @-prefixed dump commands incorrectly check for odd address and
+   cpu version, causing a crash on 68000/010 systems.
+5. ASM: Directives and instructions in the first line of a REPT 0 block
+   starting with either @ or A cause internal error.
+6. ASM: Incorrectly parsed number of bitplanes while including an IFF
+   colormap causes memory list corruption.
+7. ASM: Whitespace lines in a macro could cause the Unexpected end of file
+   error and consequent editor freeze.
+
 ================= Asm-Pro V1.20b (22-Dec-2023) ======================
 People contributing to this opensource release:
 - amigo/binary (amigo@binary.si)
