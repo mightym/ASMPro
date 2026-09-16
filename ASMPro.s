@@ -42141,20 +42141,56 @@ W1A80E:
 	dc.w	C1A820-*
 
 C1A81E:
+	IF	MC020
 	move.l	(a1),a1
+	ELSE
+	move.b	(a1),d0		;byte by byte: on a 68000 a watch
+	lsl.w	#8,d0		; address may be odd
+	move.b	(1,a1),d0
+	swap	d0
+	move.b	(2,a1),d0
+	lsl.w	#8,d0
+	move.b	(3,a1),d0
+	move.l	d0,a1
+	ENDIF
 C1A820:
 	rts
 
 C1A822:
+	IF	MC020
 	move	(a1),a1
+	ELSE
+	move.b	(a1),d0		;byte by byte: on a 68000 a watch
+	lsl.w	#8,d0		; address may be odd
+	move.b	(1,a1),d0
+	move.w	d0,a1
+	ENDIF
 	rts
 
 C1A826:
+	IF	MC020
 	add.l	(a1),a1
+	ELSE
+	move.b	(a1),d0		;byte by byte: on a 68000 a watch
+	lsl.w	#8,d0		; address may be odd
+	move.b	(1,a1),d0
+	swap	d0
+	move.b	(2,a1),d0
+	lsl.w	#8,d0
+	move.b	(3,a1),d0
+	add.l	d0,a1
+	ENDIF
 	rts
 
 C1A82A:
+	IF	MC020
 	add	(a1),a1
+	ELSE
+	move.b	(a1),d0		;byte by byte: on a 68000 a watch
+	lsl.w	#8,d0		; address may be odd
+	move.b	(1,a1),d0
+	add.w	d0,a1
+	ENDIF
 	rts
 
 W1A82E:
