@@ -30704,6 +30704,9 @@ C12ED8:
 	bsr	druk_af_d0
 	bsr	druk_af_space
 	bsr	C1588E
+	move.l	a5,d0		;68000: an odd PC can't be disassembled,
+	btst	#0,d0		; reading it would fault inside Asm-Pro
+	bne	druk_cr_nl
 	jsr	(DISASSEMBLE_A5_PRINT)
 	bsr	printthetext
 	br	druk_cr_nl
@@ -43049,6 +43052,7 @@ EXHA_COMMON_PART:
 	moveq	#0,d7
 	move.l	(pcounter_base-DT,a4),d0
 	move.l	d0,(MEM_DIS_DUMP_PTR-DT,a4)
+	bclr	#0,(MEM_DIS_DUMP_PTR+3-DT,a4) ; D after an odd PC
 	cmp.l	#eop_irq_routine,d0
 	bne.b	.C1B1AE
 	bset	#7,(DATA_EXCEPTIONNUMBER-DT,a4)
@@ -44985,7 +44989,14 @@ coppercols12bit:
 
 	move	D3,(ColorOffset-DT,a4)
 ColorList:
-
+	tst.b	(PR_OddData).l		; the palette is words: same odd
+	beq.b	.chkodd			; address check as DC.W
+	cmp	#PB_020,(ProcessorType-DT,a4)
+	bge.b	.oddok
+.chkodd	btst	#0,(INSTRUCTION_ORG_PTR+3-DT,a4)
+	beq.b	.oddok
+	jmp	(ERROR_WordatOddAddress).l
+.oddok
 	MOVEM.L	d0-a6,(IFFRegsBase-DT,a4)
 	MOVEM.L	D0/A6,-(SP)
 	bsr	OpenOldFile
